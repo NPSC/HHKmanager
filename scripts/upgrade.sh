@@ -1,6 +1,5 @@
 #!/bin/bash
 
-pwd=""
 version="/var/www/manage/storage/app/hhk/$1/"
 site="/var/www/html/hhk/$2"
 
@@ -21,7 +20,7 @@ then
 	exit
 fi
 
-rsync="rsync -acO --exclude=.git --exclude=install"
+rsync="rsync -acO --delete --exclude=.git --exclude=install --exclude=conf"
 
 if [ ! -d "${site}/house" ]; then
 	rsync+= " --exclude=house"
@@ -35,6 +34,6 @@ rsync+=" $version $site"
 
 #echo "Rsync command: $rsync"
 
-echo $pwd | su -c "$rsync" -m "hhkapp"
-echo $pwd | su -c "chown hhkapp:webdev $site -R" -m "hhkapp"
-echo $pwd | su -c "chmod 775 $site -R" -m "hhkapp"
+$($rsync)
+$(chown hhkapp:webdev $site -R)
+$(chmod 775 $site -R)

@@ -6,7 +6,9 @@
 		    @include("partials/messages")
 	        <div class="card">
 		        <div class="card-header">
-			        Users <a href="#" class="ml-2 mr-2 mr-sm-2 btn btn-success" data-toggle="modal" data-target="#createuser"><i class="fa fa-plus"></i> New User</a>
+			        Users 
+			        <a href="#" class="ml-2 mr-2 mr-sm-2 btn btn-success" data-toggle="modal" data-target="#createuser"><i class="fa fa-plus"></i> New User</a>
+			        <a href="#" class="ml-2 mr-2 mr-sm-2 btn btn-success" data-toggle="modal" data-target="#setvmrpw"><i class="fa fa-user"></i> Update VM Racks password</a>
 		        </div>
 	            <div class="card-body">
 		            <div class="table-responsive">
@@ -45,4 +47,5 @@
 	    </div>
     </div>
     @include('users.create')
+    @include('users.setvmrpassword')
 @endsection

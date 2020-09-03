@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Site;
 use App\Comment;
 use App\Version;
+use App\User;
 use Illuminate\Http\Request;
 use Storage;
 use Session;
@@ -102,8 +103,17 @@ class SiteController extends Controller
 	        
 			$output = "";
 			
+			if(!UserController::checkVMRExpiry() > 0){
+			    Session::flash("error", "VM Racks password Expired");
+			    return redirect()->back();
+			}
+			
 			try{
-				passthru(base_path() . "/scripts/newSite.sh " . $version->filepath . " " . $request->path);
+			    $hhkapp = User::withTrashed()->where("email", "hhkapp")->first();
+			    $vmrpwd = $hhkapp->password;
+			    
+				passthru("echo " . decrypt($vmrpwd) . " | su -c \"bash " . base_path() . "/scripts/newSite.sh " . $version->filepath . " " . $request->path . "\" -m \"hhkapp\"");
+				
 			}catch(\Exception $e){
 				Session::flash('error', "Failed to copy files: " . $e->getMessage());
 				return redirect()->back();
@@ -218,7 +228,11 @@ class SiteController extends Controller
 		    
 		    $version = Version::find($request->version_id);
 		    $site = Site::find($request->site_id);
-		    $script = "bash " . base_path() . "/scripts/upgrade.sh " . $version->filepath . " " . $site->url;
+		    
+		    $hhkapp = User::withTrashed()->where("email", "hhkapp")->first();
+		    $vmrpwd = $hhkapp->password;
+		    
+		    $script = "echo " . decrypt($vmrpwd) . " | su -c \"bash " . base_path() . "/scripts/upgrade.sh " . $version->filepath . " " . $site->url . "\" -m \"hhkapp\"";
 		    $upgradeURL = "https://hospitalityhousekeeper.net/" . $site->url . "/admin/ws_update.php";
 		    $client = new Client(); //GuzzleHttp\Client
 		    
@@ -237,7 +251,7 @@ class SiteController extends Controller
 			
 			if(!isset($passwordJson->init)){
 			    $passwordResult = $client->request('POST', $upgradeURL, [
-			        'query' => [
+			        'form_params' => [
 			            'cd' => $site->config['db']['Schema'],
 			            'un' => $request->user,
 			            'so' => $request->pw,
@@ -250,6 +264,11 @@ class SiteController extends Controller
 			
 			if(isset($passwordJson->resultMsg) && $passwordJson->resultMsg == "bubbly"){
 		    
+			    if(!UserController::checkVMRExpiry() > 0){
+			         Session::flash("error", "VM Racks password Expired");
+			         return redirect()->back();
+			    }
+			    
 			    //copy files
 			    ob_start();
 			    passthru($script);
@@ -270,7 +289,7 @@ class SiteController extends Controller
 				if(!isset($json->init)){
 				    
 				    $result = $client->request('POST', $upgradeURL, [
-				        'query' => [
+				        'form_params' => [
 				            'cd' => $site->config['db']['Schema'],
 				            'un' => $request->user,
 				            'so' => $request->pw,
@@ -300,7 +319,7 @@ class SiteController extends Controller
 				}
 				
 			}else{
-				Session::flash('error', "Unable to update - Invalid Password");
+				Session::flash('error', "Unable to update - Invalid Password" . $passwordResult->getBody());
 			}
 	    }catch(\Exception $e){
 		   	Session::flash("error", "The following error has occurred: \n" . $e->getMessage() . " Line: " . $e->getLine());
@@ -317,18 +336,31 @@ class SiteController extends Controller
 	    $slugEnd = end($slug);
 	    
 	    if($slug[0] == "demo"){
-	    	$script = "bash " . base_path() . "/scripts/move.sh " . $slugEnd;
+	        
+	        if(!UserController::checkVMRExpiry() > 0){
+	            Session::flash("error", "VM Racks password Expired");
+	            return redirect()->back();
+	        }
+	        
+	        try{
+	            $hhkapp = User::withTrashed()->where("email", "hhkapp")->first();
+	            $vmrpwd = $hhkapp->password;
+	        
+	    	    $script = "echo " . decrypt($vmrpwd) . " | su -c \"bash " . base_path() . "/scripts/move.sh " . $slugEnd . "\" -m \"hhkapp\"";
 			
-			passthru($script);
+			    passthru($script);
 			
-	    	if(Storage::disk('prod')->exists($slugEnd . "/conf/site.cfg")){
+	    	    if(Storage::disk('prod')->exists($slugEnd . "/conf/site.cfg")){
 				
-				$site->url = $slugEnd;
-				$site->save();
-				session::flash('success', "Site " . $site->siteName . " moved successfully.<br><br><strong>Further tasks</strong><ul><li>Add 'Use ClientVHost $slugEnd $slugEnd' to /etc/httpd/conf.d/clients.conf</li></ul>");
-			}else{
-				session::flash('error', "The site could not be moved.");
-			}
+				    $site->url = $slugEnd;
+				    $site->save();
+				    session::flash('success', "Site " . $site->siteName . " moved successfully.<br><br><strong>Further tasks</strong><ul><li>Add 'Use ClientVHost $slugEnd $slugEnd' to /etc/httpd/conf.d/clients.conf</li></ul>");
+			    }else{
+				    session::flash('error', "The site could not be moved.");
+			    }
+	        }catch(\Exception $e){
+	            Session::flash("error", $e->getMessage());
+	        }
 	    }else{
 		    session::flash('error', "Site is already in the live directory");
 	    }

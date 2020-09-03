@@ -37,6 +37,7 @@ Route::resource('sites', 'SiteController', ['only' => ['store','show', 'destroy'
 
 Route::match(['put','patch'], 'users/{id}/resetpassword', 'UserController@resetpassword')->name('users.resetpassword');
 Route::resource('users', 'UserController', ['only' => ['index', 'store']]);
+Route::match(['put', 'patch'], 'users/setvmrpassword', 'UserController@setVMRPassword')->name('users.setvmrpassword');
 
 Route::resource('comments', 'CommentController', ['only' => ['store']]);
 Route::resource('reports', 'ReportController', ['only' => ['index']]);

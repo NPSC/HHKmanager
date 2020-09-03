@@ -5,10 +5,10 @@ copyFiles() {
 	
 	#echo "Rsync command: $rsync"
 	
-	echo $pwd | su -c "$rsync" -m "hhkapp"
-	echo $pwd | su -c "chown hhkapp:webdev $site -R" -m "hhkapp"
-	echo $pwd | su -c "chmod 775 $site -R" -m "hhkapp"
-	echo $pwd | su -c "chmod 777 $site/conf -R" -m "hhkapp"
+	$($rsync)
+	$(chown hhkapp:webdev $site -R)
+	$(chmod 775 $site -R)
+	$(chmod 777 $site/conf -R)
 }
 
 pwd=""

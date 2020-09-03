@@ -1,6 +1,5 @@
 #!/bin/bash
 #
-
 rcvr1=wireland@nonprofitsoftwarecorp.org
 
 for i in  hhkapp

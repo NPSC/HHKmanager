@@ -34,7 +34,10 @@ class UserController extends Controller
         if($user->hasAnyRole("Admin")){
 	        $users = User::all();
 	        $roles = Role::all();
-	        return view('users.index')->with(['users'=>$users, 'roles'=>$roles]);
+	        
+	        $hhkappExp = self::checkVMRExpiry();
+	        
+	        return view('users.index')->with(['users'=>$users, 'roles'=>$roles, 'hhkappExp'=>$hhkappExp]);
         }else{
 	        return abort(403);
         }
@@ -92,6 +95,37 @@ class UserController extends Controller
         	return redirect()->route('users.index', []);
         }
 
+    }
+    
+    public function setVMRPassword(Request $request){
+        $request->validate(array(
+            'password' => 'required|string|min:8|confirmed'
+        ));
+        try{
+            $vmrUser = User::withTrashed()->where('email', 'hhkapp')->first();
+            if($vmrUser){
+                $vmrUser->password = encrypt($request->password);
+        
+                $vmrUser->save();
+                Session::flash("success", "VM Racks password updated successfully");
+            }
+        }catch(\Exception $e){
+            Session::flash("error", $e->getMessage());
+        }
+        return redirect()->route('users.index', []);
+        
+    }
+    
+    public static function checkVMRExpiry(){
+        $hhkapp = User::withTrashed()->where("email", "hhkapp")->first();
+        $pwd = $hhkapp->password;
+        
+        ob_start();
+        passthru("echo " . decrypt($pwd) . " | su -c \"bash " . base_path() . "/scripts/checkpasswordexpiry.sh\" -m \"hhkapp\"");
+        $scriptoutput = ob_get_contents();
+        ob_end_clean();
+        
+        return $scriptoutput;
     }
 
     /**

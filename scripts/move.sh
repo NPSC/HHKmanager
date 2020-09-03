@@ -1,6 +1,5 @@
 #!/bin/bash
 
-pwd=""
 src="/var/www/html/hhk/demo/$1"
 dest="/var/www/html/hhk/$1"
 
@@ -19,7 +18,8 @@ fi
 
 cmd="mv $src $dest"
 cfgcmd="sed -i '/^Mode/ s/demo/live/g' $dest/conf/site.cfg"
-echo $pwd | su -c "$cmd" -m "hhkapp"
-echo $pwd | su -c "$cfgcmd" -m "hhkapp"
-echo $pwd | su -c "chown hhkapp:webdev $dest -R" -m "hhkapp"
-echo $pwd | su -c "chmod 775 $dest -R" -m "hhkapp"
+
+$($cmd)
+$($cfgcmd)
+$(chown hhkapp:webdev $dest -R)
+$(chmod 775 $dest -R)
