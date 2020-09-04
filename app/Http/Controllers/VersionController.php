@@ -31,9 +31,10 @@ class VersionController extends Controller
     public function index()
     {
 	    if(Auth::user()->hasAnyRole("Admin")){
-        	$versions = Version::orderBy('release_date', 'desc')->withTrashed()->get();
+        	$versions = Version::orderBy('release_date', 'desc')->get();
+        	$deletedVersions = Version::orderBy('release_date', 'desc')->onlyTrashed()->get();
         	$zips = Storage::disk("hhk")->files("zips");
-			return view('versions.index')->with(['versions'=>$versions, 'zips'=>$zips]);
+			return view('versions.index')->with(['versions'=>$versions, 'deletedVersions'=>$deletedVersions, 'zips'=>$zips]);
 		}else{
 			return abort(403);
 		}

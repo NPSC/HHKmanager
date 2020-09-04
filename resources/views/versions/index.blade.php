@@ -22,7 +22,7 @@
 					            </tr>
 				            </thead>
 				            <tbody>
-					        @if(count($versions) > 0)
+							@if(count($versions) > 0)
 							@foreach($versions as $version)
 							<tr>
 								<td>{{ $version->name }}</td>
@@ -64,10 +64,44 @@
 								</td>
 							</tr>
 							@endforeach
-							@else
-							<tr>
-								<td colspan="6" class="text-center">No Versions found</td>
+							@endif
+							@if(count($deletedVersions) > 0)
+							@foreach($deletedVersions as $version)
+							<tr class="text-muted">
+								<td>{{ $version->name }}</td>
+								<td>{{ $version->filepath }}</td>
+								<td>@if($version->patch)
+										Patch
+									@else
+										Full
+									@endif
+								</td>
+								<td>{{ $version->release_date->format('M d, Y') }}</td>
+								<td id="status">No</td>
+								<td>
+									<div class="btn-group btn-spacing-btm" role="group">
+										<button id="btnGroupDropActions" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+										<div class="dropdown-menu" aria-labelledby="btnGroupDropActions">
+											@if($version->release_notes)
+											<button data-toggle="modal" data-target="#releasenotes" class="dropdown-item" id="getNotes" data-url="{{ route('versions.json',['id'=>$version->id])}}">
+												<i class="fa fa-file" aria-hidden="true"></i> View Release Notes
+											</button>
+											@endif
+											
+												<button @if(!$version->trashed()) style="display:none;" @endif class="dropdown-item" id="enable" data-url="{{ route('versions.restore', ['id'=>$version->id])}}">
+													<i class="fa fa-check-circle-o" aria-hidden="true"></i> Enable
+												</button>
+												{!! Form::open(['route' => ['versions.destroy', $version->id], 'method' => 'delete']) !!}
+													<input type="submit" @if(!$version->trashed()) style="display:none;" @endif class="dropdown-item" value="Delete" >
+												{!! Form::close() !!}
+												<button @if($version->trashed()) style="display:none;" @endif class="dropdown-item" id="disable" data-url="{{ route('versions.destroy', ['id'=>$version->id])}}">
+													<i class="fa fa-times-circle-o" aria-hidden="true"></i> Disable
+												</button>
+										</div>
+									</div>
+								</td>
 							</tr>
+							@endforeach
 							@endif
 				            </tbody>
 			            </table>
