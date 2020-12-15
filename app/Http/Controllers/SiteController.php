@@ -100,6 +100,7 @@ class SiteController extends Controller
 	        $patharray = explode('/', $request->path);
 	        $dbname = end($patharray);
 	        $dbpassword = str_random(40);
+	        $sitePepper = str_random(40);
 	        
 			$output = "";
 			
@@ -124,7 +125,8 @@ class SiteController extends Controller
 				$config->set('db', 'URL', '10.138.0.21')
 						->set('db', 'User', $dbname)
 						->set('db', 'Password', self::hhkencrypt($dbpassword))
-						->set('db', 'Schema', $dbname);
+						->set('db', 'Schema', $dbname)
+				        ->set('site', 'sitePepper', $sitePepper);
 						
 				if($request->demo){
 					$config->set('site', 'Mode', 'demo');
@@ -162,7 +164,7 @@ class SiteController extends Controller
 	        
 	        $site->comments()->save($comment);
 	        
-	        $output .= '<br>New Schema Username: ' . $dbname . '<br>New Schema password: ' . $dbpassword . '<br>Site created successfully, <a href="https://hospitalityhousekeeper.net/' . $request->path . '/install/step2.php" target="_blank">click here</a> to continue installation.<br>';
+	        $output .= '<br>New Schema Username: ' . $dbname . '<br>New Schema password: ' . $dbpassword . '<br>New Site Pepper: ' . $sitePepper .  '<br>Site created successfully, <a href="https://hospitalityhousekeeper.net/' . $request->path . '/install/step2.php" target="_blank">click here</a> to continue installation.<br>';
 	        
 	        Session::flash('success', "<pre>" . $output . "</pre>");
 	        
@@ -354,7 +356,7 @@ class SiteController extends Controller
 				
 				    $site->url = $slugEnd;
 				    $site->save();
-				    session::flash('success', "Site " . $site->siteName . " moved successfully.<br><br><strong>Further tasks</strong><ul><li>Add 'Use ClientVHost $slugEnd $slugEnd' to /etc/httpd/conf.d/clients.conf</li></ul>");
+				    session::flash('success', "Site " . $site->siteName . " moved successfully.<br><br><strong>Further tasks</strong><ul><li>Add 'Use ClientVHost $slugEnd $slugEnd' to /etc/httpd/conf.d/z_clients.conf</li></ul>");
 			    }else{
 				    session::flash('error', "The site could not be moved.");
 			    }
