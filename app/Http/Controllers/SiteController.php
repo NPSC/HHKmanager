@@ -43,7 +43,7 @@ class SiteController extends Controller
     public function demo()
     {
 	    $sites = Site::all();
-	    $sites = $sites->where('config.site.Mode', 'demo');
+	    $sites = $sites->where('mode', 'demo');
 	    $versions = Version::orderBy('release_date', 'desc')->get();
 	    $mode = "Demo";
 	    
@@ -53,10 +53,10 @@ class SiteController extends Controller
     public function live()
     {
         $sites = Site::all();
-        if(count($sites->whereNotIn('config.site.Mode', ['demo', 'live'])) > 0){
+        if(count($sites->whereNotIn('mode', ['demo', 'live'])) > 0){
 		    Session::flash("info", "There is one or more sites with issues, <a href='" . route("sites.other") . "'>Click here to fix</a>");
 	    }
-        $sites = $sites->where('config.site.Mode', 'live');
+        $sites = $sites->where('mode', 'live');
 	    $versions = Version::orderBy('release_date', 'desc')->get();
 	    $mode = "Live";
 	    
@@ -66,7 +66,7 @@ class SiteController extends Controller
     public function other()
     {
 	    $sites = Site::all();
-	    $sites = $sites->whereNotIn('config.site.Mode', ['demo', 'live']);
+	    $sites = $sites->whereNotIn('mode', ['demo', 'live']);
 	    $versions = Version::orderBy('release_date', 'desc')->get();
 	    $mode = "Other";
 	    

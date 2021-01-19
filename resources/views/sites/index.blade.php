@@ -44,7 +44,7 @@
 						            <button data-toggle="modal" data-target="#siteconfig" class="dropdown-item" id="getConfig" data-url="{{ route('sites.getConfig',['id'=>$site->id])}}">Config</button>
 						            <button data-toggle="modal" data-target="#sitecomments" class="dropdown-item" id="getComments" data-url="{{ route('sites.getComments',['id'=>$site->id])}}">Comments</button>   
 						        	<button data-toggle="modal" data-target="#upgradesite" class="dropdown-item" id="upgrade" data-site_id="{{ $site->id }}" data-site_name="{{ $site->siteName }}">Upgrade</button>
-						        	@if($site->config && $site->config['site']['Mode'] == "demo")
+						        	@if($site->mode == "demo")
 						        		<a href="{{ route('sites.setLive', $site) }}" class="dropdown-item">Set Live</a>
 						        	@endif
 						        	<button data-toggle="modal" data-target="#deletesite" class="dropdown-item" id="delete" data-site_id="{{ $site->id }}" data-site_name="{{ $site->siteName }}">Remove</button>

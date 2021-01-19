@@ -105,7 +105,7 @@ class Site extends Model
     public function getSysconfigAttribute(){
 	    try{
 	    	$result = $this->schema->table('sys_config')->select('Key', 'Value')
-	    	->whereIn('Key', ['siteName', 'Zip_Code', 'RoomPriceModel', 'tz'])
+	    	->whereIn('Key', ['siteName', 'Zip_Code', 'RoomPriceModel', 'tz','mode'])
 	    	->get()->keyBy('Key');
 	    }catch(\Illuminate\Database\QueryException $e){
 		    $result = false;
@@ -154,6 +154,16 @@ class Site extends Model
 	    }
 	    
 	    return $result;
+    }
+    
+    public function getModeAttribute(){
+        try{
+            $mode = $this->sysconfig['mode']->Value;
+        }catch(\Exception $e){
+            $mode = $this->config['site']['Mode'];
+        }
+        
+        return $mode;
     }
     
     public function getRoomCountAttribute(){

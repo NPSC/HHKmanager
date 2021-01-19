@@ -8,7 +8,7 @@
 	</h1>
     <div class="row">
 	    @foreach($sites as $site)
-		    @if($site->config['site']['Mode'] == 'demo')
+		    @if($site->mode == 'demo')
 	        <div class="col-md-3 mb-4">
 	            <div class="card">
 	                <div class="card-body">
