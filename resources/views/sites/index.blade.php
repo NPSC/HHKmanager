@@ -1,13 +1,15 @@
 @extends('layouts.app')
 @section('site-title')
 	<div class="navbar-brand text-center">{{ $mode }} Sites</div>
-	<div class="nav-link dropdown">
-		<button class="btn btn-sm btn-success dropdown-toggle" type="button" id="addMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plus"></i></button>
-		<div class="dropdown-menu" aria-labelledby="addMenuButton">
-			<button class="dropdown-item" data-toggle="modal" data-target="#createsite">New Site</button>
-    		<button class="dropdown-item" data-toggle="modal" data-target="#importsite">Add Existing Site</button>
-  		</div>
-	</div>
+	@if($mode == "Demo")
+    	<div class="nav-link dropdown">
+    		<button class="btn btn-sm btn-success dropdown-toggle" type="button" id="addMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plus"></i></button>
+    		<div class="dropdown-menu" aria-labelledby="addMenuButton">
+    			<button class="dropdown-item" data-toggle="modal" data-target="#createsite">New Site</button>
+        		<button class="dropdown-item" data-toggle="modal" data-target="#importsite">Add Existing Site</button>
+      		</div>
+    	</div>
+	@endif
 @endsection
 @section('content')
 @include("partials/messages")
@@ -47,7 +49,7 @@
 						        	@if($site->mode == "demo")
 						        		<a href="{{ route('sites.setLive', $site) }}" class="dropdown-item">Set Live</a>
 						        	@endif
-						        	<button data-toggle="modal" data-target="#deletesite" class="dropdown-item" id="delete" data-site_id="{{ $site->id }}" data-site_name="{{ $site->siteName }}">Remove</button>
+						        	<button data-toggle="modal" data-target="#deletesite" class="dropdown-item" id="delete" data-site_id="{{ $site->id }}" data-site_name="{{ $site->siteName }}">Remove from list</button>
 						        	<!--<a href="{{ route('sites.destroy', $site) }}" class="dropdown-item">Delete Site</a>-->
 					            </div>
 				            </div>
@@ -94,6 +96,7 @@
     @include('users.setpw')
     @include('sites.comments')
     @include('sites.edit')
+    @include('sites.delete')
 
 @endsection
 

@@ -91,8 +91,8 @@ class SiteController extends Controller
      */
     public function store(Request $request)
     {
+        $request->path = "demo/" . $request->path;
         $request->validate(array(
-		        'name' => 'required|max:255|unique:sites',
 		        'path' => ['required', new fileNotExist("prod")],
 		        'version' =>['required', "exists:versions,id"],
 	        ));
@@ -109,11 +109,13 @@ class SiteController extends Controller
 			    return redirect()->back();
 			}
 			
+			Session::flash('success', "path: " . $request->path);
+			
 			try{
 			    $hhkapp = User::withTrashed()->where("email", "hhkapp")->first();
 			    $vmrpwd = $hhkapp->password;
 			    
-				passthru("echo " . decrypt($vmrpwd) . " | su -c \"bash " . base_path() . "/scripts/newSite.sh " . $version->filepath . " " . $request->path . "\" -m \"hhkapp\"");
+				passthru("echo \"" . decrypt($vmrpwd) . "\" | su -c \"bash " . base_path() . "/scripts/newSite.sh " . $version->filepath . " " . $request->path . "\" -m \"hhkapp\"");
 				
 			}catch(\Exception $e){
 				Session::flash('error', "Failed to copy files: " . $e->getMessage());
@@ -126,15 +128,12 @@ class SiteController extends Controller
 						->set('db', 'User', $dbname)
 						->set('db', 'Password', self::hhkencrypt($dbpassword))
 						->set('db', 'Schema', $dbname)
-				        ->set('site', 'sitePepper', $sitePepper);
-						
-				if($request->demo){
-					$config->set('site', 'Mode', 'demo');
-				}else{
-					$config->set('site', 'Mode', 'live');
+				        ->set('site', 'sitePepper', $sitePepper)
+				        ->save();
+				
+		        if($config->get('site', 'Mode', 'false') != 'false'){
+				    $config->set('site', 'Mode', 'demo')->save();
 				}
-						
-				$config->save();
 			}else{
 				Session::flash('error', "Unable to find site.cfg - more info below<br><pre>" . $output . "</pre>");
 				return redirect()->back();
@@ -153,7 +152,6 @@ class SiteController extends Controller
 			
 	        $site = new Site;
 	        
-	        $site->name = $request->name;
 	        $site->url = $request->path;
 	        $site->save();
 	        

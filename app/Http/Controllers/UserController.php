@@ -121,7 +121,7 @@ class UserController extends Controller
         $pwd = $hhkapp->password;
         
         ob_start();
-        passthru("echo " . decrypt($pwd) . " | su -c \"bash " . base_path() . "/scripts/checkpasswordexpiry.sh\" -m \"hhkapp\"");
+        passthru("echo \"" . decrypt($pwd) . "\" | su -c \"bash " . base_path() . "/scripts/checkpasswordexpiry.sh\" -m \"hhkapp\"");
         $scriptoutput = ob_get_contents();
         ob_end_clean();
         

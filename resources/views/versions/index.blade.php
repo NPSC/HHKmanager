@@ -92,7 +92,7 @@
 													<i class="fa fa-check-circle-o" aria-hidden="true"></i> Enable
 												</button>
 												{!! Form::open(['route' => ['versions.destroy', $version->id], 'method' => 'delete']) !!}
-													<input type="submit" @if(!$version->trashed()) style="display:none;" @endif class="dropdown-item" value="Delete" >
+													<input type="submit" @if(!$version->trashed()) style="display:none;" @endif class="dropdown-item" value="Delete from filesystem" >
 												{!! Form::close() !!}
 												<button @if($version->trashed()) style="display:none;" @endif class="dropdown-item" id="disable" data-url="{{ route('versions.destroy', ['id'=>$version->id])}}">
 													<i class="fa fa-times-circle-o" aria-hidden="true"></i> Disable

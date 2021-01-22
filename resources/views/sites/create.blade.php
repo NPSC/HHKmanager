@@ -13,8 +13,13 @@
 	      	<div class="row">
 		      	<div class="col-12">
 		      		<div class="form-group">
-			      		{!! Form::label('name', 'Site Name', ['class'=>'sr-only']); !!}
-			      		{!! Form::text('name', null, ['class'=>'form-control', 'placeholder'=>'Site Name']); !!}
+			      		{!! Form::label('path', 'URL', ['class'=>'sr-only']); !!}
+			      		<div class="input-group">
+				      		<div class="input-group-prepend">
+					      		<div class="input-group-text">hhk.net/demo/</div>
+				      		</div>
+					  		{!! Form::text('path', null, ['class'=>'form-control', 'placeholder'=>'URL']); !!}
+			      		</div>
 		      		</div>
 		      		<div class="form-group">
 			      		{!! Form::label('version', 'Version', ['class'=>'sr-only']); !!}
@@ -28,22 +33,6 @@
 							@endif
 						@endforeach
 					</select>
-		      		</div>
-		      		<div class="form-group">
-			      		{!! Form::label('path', 'URL', ['class'=>'sr-only']); !!}
-			      		<div class="input-group">
-				      		<div class="input-group-prepend">
-					      		<div class="input-group-text">hhk.net/</div>
-				      		</div>
-					  		{!! Form::text('path', null, ['class'=>'form-control', 'placeholder'=>'URL']); !!}
-			      		</div>
-		      		</div>
-		      		<div class="form-group">
-			      		<label class="switch">
-			      			<input type="checkbox" name="demo">
-			      			<span class="slider round"></span>
-			      		</label>
-			      		<span class="align-top ml-2 mt-1 d-inline-block">Demo site</span>
 		      		</div>
 		      	</div>
 	      	</div>
