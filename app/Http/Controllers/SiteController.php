@@ -232,7 +232,7 @@ class SiteController extends Controller
 		    $hhkapp = User::withTrashed()->where("email", "hhkapp")->first();
 		    $vmrpwd = $hhkapp->password;
 		    
-		    $script = "echo " . decrypt($vmrpwd) . " | su -c \"bash " . base_path() . "/scripts/upgrade.sh " . $version->filepath . " " . $site->url . "\" -m \"hhkapp\"";
+		    $script = "echo \"" . decrypt($vmrpwd) . "\" | su -c \"bash " . base_path() . "/scripts/upgrade.sh " . $version->filepath . " " . $site->url . "\" -m \"hhkapp\"";
 		    $upgradeURL = "https://hospitalityhousekeeper.net/" . $site->url . "/admin/ws_update.php";
 		    $client = new Client(); //GuzzleHttp\Client
 		    
