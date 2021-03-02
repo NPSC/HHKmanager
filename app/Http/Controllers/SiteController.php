@@ -130,10 +130,6 @@ class SiteController extends Controller
 						->set('db', 'Schema', $dbname)
 				        ->set('site', 'sitePepper', $sitePepper)
 				        ->save();
-				
-		        if($config->get('site', 'Mode', 'false') != 'false'){
-				    $config->set('site', 'Mode', 'demo')->save();
-				}
 			}else{
 				Session::flash('error', "Unable to find site.cfg - more info below<br><pre>" . $output . "</pre>");
 				return redirect()->back();
@@ -346,7 +342,7 @@ class SiteController extends Controller
 	            $hhkapp = User::withTrashed()->where("email", "hhkapp")->first();
 	            $vmrpwd = $hhkapp->password;
 	        
-	    	    $script = "echo " . decrypt($vmrpwd) . " | su -c \"bash " . base_path() . "/scripts/move.sh " . $slugEnd . "\" -m \"hhkapp\"";
+	    	    $script = "echo \"" . decrypt($vmrpwd) . "\" | su -c \"bash " . base_path() . "/scripts/move.sh " . $slugEnd . "\" -m \"hhkapp\"";
 			
 			    passthru($script);
 			

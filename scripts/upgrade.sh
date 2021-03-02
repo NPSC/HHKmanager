@@ -35,5 +35,5 @@ rsync+=" $version $site"
 #echo "Rsync command: $rsync"
 
 $($rsync)
-$(chown hhkapp:webdev $site -R)
-$(chmod 775 $site -R)
+#$(chown hhkapp:webdev $site -R)
+#$(chmod 775 $site -R)
