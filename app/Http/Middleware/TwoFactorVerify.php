@@ -23,7 +23,7 @@ class TwoFactorVerify
             return $next($request);
         } 
         
-        $user->token_2fa = mt_rand(10000,99999);
+        $user->token_2fa = mt_rand(10000000,99999999);
         $user->save();        
         // This is the twilio way
         //Twilio::message($user->phone_number, 'Two Factor Code: ' . $user->token_2fa);
